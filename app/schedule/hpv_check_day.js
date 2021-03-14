@@ -8,7 +8,6 @@ class HpvCheckDay extends Subscription {
         return {
             cron: '0 0 9-23 * * *', // 每天
             type: 'worker', // 指定所有的 worker 都需要执行
-            immediate: true
         };
     }
 

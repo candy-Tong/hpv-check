@@ -34,16 +34,16 @@ class HpvCheckDay extends Subscription {
                 data: data
             };
             res = await axios(config);
-            this.app.logger.info(`查询成功\t${JSON.stringify(res.data)}`)
+            this.app.logger.info(`查询地区成功\t${JSON.stringify(res.data)}`)
         } catch (e) {
-            this.app.logger.info('【江门检查】查询失败')
+            this.app.logger.info('【江门检查】查询hpv地区失败')
             this.app.logger.error(e)
             await axios('https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=3aa08509-2fa4-4996-8b2b-586bf81f109b', {
                 method: 'POST',
                 data: {
                     "msgtype": "text",
                     "text": {
-                        "content": `【江门检查】查询失败`
+                        "content": `【江门检查】查询地区失败`
                     }
                 }
             });
@@ -58,6 +58,49 @@ class HpvCheckDay extends Subscription {
             return
         }
         this.app.logger.info('包含江门市')
+
+        // 查询社区医院
+        try {
+            var data = qs.stringify({
+                'areaCode': '44070300',
+                'opType': 'queryVaccOrg',
+                'vaccineCode': 'ff8080816e5abdb9016efe13f7fa0f6d',
+                'adultId': '2d90c3477810916d017811a921fe0b94'
+            });
+            var config = {
+                method: 'post',
+                url: 'https://immunity.szcdc.net/nipisgd/appApintrment.action?appType=2&appId=878b858f1bfd4cbfb8753226831eceaf&version=1.7.0',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Cookie': 'JSESSIONID=7A78F82978C19A72D14489946D8B3535'
+                },
+                data : data
+            };
+
+            res = await axios(config);
+            this.app.logger.info(`查询社区医院成功\t${JSON.stringify(res.data)}`)
+        } catch (e) {
+            this.app.logger.info('【江门检查】查询社区医院失败')
+            this.app.logger.error(e)
+            await axios('https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=3aa08509-2fa4-4996-8b2b-586bf81f109b', {
+                method: 'POST',
+                data: {
+                    "msgtype": "text",
+                    "text": {
+                        "content": `【江门检查】查询社区医院失败`
+                    }
+                }
+            });
+            return
+        }
+
+        if(res.data.message?.length === 0){
+            this.app.logger.info('没有蓬江区医院')
+            has_city_str = '没有蓬江区医'
+            return
+        }
+
+
 
         try {
            has_city_str = '包含江门市，冲冲冲！！！！！'
