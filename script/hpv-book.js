@@ -10,8 +10,6 @@ const people = {
     'name': '赵洁玲',
 }
 
-
-
 // 查询有九价疫苗的地区
 async function getArea() {
     const data = qs.stringify({
@@ -109,6 +107,8 @@ async function book(orgCode, apptrmentCode, segmentId) {
 }
 
 async function start() {
+
+    console.log('---------------\nstart time', new Date().toLocaleString())
     // 查询江门是否有疫苗
 
     let area = await getArea()
@@ -125,6 +125,11 @@ async function start() {
     console.log('---------------\n查询蓬江区是否有疫苗', hospitalsList)
     // 抢第一家医院
     const hospital = hospitalsList[0]
+
+    if(!hospital){
+        console.log('查询蓬江区的医院没有疫苗')
+        return
+    }
     // 第一家医院可预订日期
     const bookDateList = await getBookDate(hospital.orgCode)
 
@@ -170,6 +175,7 @@ async function start() {
 }
 
 start()
+
 
 
 
